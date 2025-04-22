@@ -6,35 +6,33 @@ import random
 class Activity:
     name: str
     duration: int
-    intensity: float  # 0.0 to 1.0
-
+    steps: int = None
 # Competitive activities - focus on measurable achievements
 COMPETITIVE_ACTIVITIES = [
-    Activity("HIIT workout", 30, 0.9),
-    Activity("Running challenge", 45, 0.8),
-    Activity("Strength training", 40, 0.85),
-    Activity("Swimming laps", 35, 0.75),
-    Activity("Cycling sprint", 25, 0.9)
+    Activity("Walked 10000 steps", 1440, 10000),
+    Activity("Walked 5000 steps", 60, 5000),
+    Activity("Walked 2000 steps", 10080, 2000),
+    Activity("Walked 1000 steps", 2880, 1000),
 ]
 
 # Engagement activities - focus on social interaction
 ENGAGEMENT_ACTIVITIES = [
-    Activity("like_post", 5, 0.1),
-    Activity("add_comment_on_post", 10, 0.2)
+    Activity("like_post", 5),
+    Activity("add_comment_on_post", 10)
 ]
 
 # Personal wellness activities - focus on self-improvement
 PERSONAL_ACTIVITIES = [
-    Activity("Advanced yoga flow", 45, 0.6),
-    Activity("Deep meditation", 30, 0.2),
-    Activity("Intensive strength training", 50, 0.85),
-    Activity("Skill mastery practice", 40, 0.5),
-    Activity("Recovery and mobility", 35, 0.3),
-    Activity("Advanced cardio session", 45, 0.8),
-    Activity("Mind-body connection", 25, 0.4),
-    Activity("Technical skill refinement", 30, 0.6),
-    Activity("Personal challenge workout", 40, 0.75),
-    Activity("Wellness routine", 35, 0.4)
+    Activity("Advanced yoga flow", 45),
+    Activity("Deep meditation", 30),
+    Activity("Intensive strength training", 50),
+    Activity("Skill mastery practice", 40),
+    Activity("Recovery and mobility", 35),
+    Activity("Advanced cardio session", 45),
+    Activity("Mind-body connection", 25),
+    Activity("Technical skill refinement", 30),
+    Activity("Personal challenge workout", 40),
+    Activity("Wellness routine", 35)
 ]
 
 def select_activity(activities: List[Activity], context: Dict[str, float]) -> Activity:
