@@ -1,54 +1,26 @@
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List
-import httpx
-import os
-from dotenv import load_dotenv
+import json
+import requests
 
-app = FastAPI()
-
-class PropertyInstance(BaseModel):
-    property: int
-    value: int
-
-class ActivityRequest(BaseModel):
-    gameDescriptor: int
-    dataProviderName: str
-    propertyInstances: List[PropertyInstance]
-    players: List[int]
-
-load_dotenv()
-GAMEBUS_API_URL = "https://api.healthyw8.gamebus.eu/v2/activities"
-GAMEBUS_BEARER_TOKEN = os.getenv("GAMEBUS_BEARER_TOKEN")
-
-@app.post("/post_activity")
-async def post_activity(activity: ActivityRequest):
-    if not GAMEBUS_BEARER_TOKEN:
-        raise HTTPException(status_code=500, detail="GameBus bearer token not configured")
+def post_walk_activity(steps: int):
+    url = "https://api.healthyw8.gamebus.eu/v2/activities?dryrun=false&fields=personalPoints"
     
+    with open('walk_activity.json', 'r') as file:
+        data = json.load(file)
+        data['propertyInstances'] = [{"property":20,"value":steps}]
+        
+    with open('walk_activity.json', 'w') as file:
+        json.dump(data, file)
+
+    payload = {}
+    files=[
+        ('activity', ('walk_activity.json', open('walk_activity.json', 'rb'), 'application/json'))
+    ]
+    #update value in walk_activity.json
+
     headers = {
-        "Authorization": f"Bearer {GAMEBUS_BEARER_TOKEN}",
-        "Content-Type": "application/json"
+    'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZ2FtZWJ1c19hcGkiXSwidXNlcl9uYW1lIjoibC5qLmphbWVzK2FnZW50czFAdHVlLm5sIiwic2NvcGUiOlsicmVhZCIsIndyaXRlIiwidHJ1c3QiLCJkZWxldGU6YWN0aXZpdHkiXSwiZXhwIjoxODIzMDg5ODU1LCJhdXRob3JpdGllcyI6WyJVU0VSIl0sImp0aSI6IlJ1ZzFpd201RGEzY19NLUtIVF84aFZMQTJiWSIsImNsaWVudF9pZCI6ImdhbWVidXNfc3R1ZGlvX2FwcCJ9.mjkXdOCfhxHFtPGrLfFvivU3SvKGzhDnKY8QHKpwIK9SHbzbKgQLIEMdvzprU6bAeTl9IhSQmXUCYlkyKtXVIGqIfGF7yZ1pFu-MNAoePRDPt1rjr6NMoEgKCAvCGTNK7Of5cM0MJS2UWs3fr9kMRXlFeKu8XtipG5kha9kwqsflh_L1Flw_4PZc73EfK0igCJ9PNHQBNFLIG1SwVgS0Qsw0S4V9GMQtOWRq1Fzt7IUlAcKTHVpMPnw6lNVvFX3PlYKCxm3GNjw0K-YI7iQSNJYZ1_BYPuP3EJwt13FyOi8XLH_3OqX9HrzRS8hWhXJbFFTih5nUieciHjtaaJthsw'
     }
-    
-    params = {
-        "dryrun": "false",
-        "fields": "personalPoints"
-    }
-    
-    try:
-        async with httpx.AsyncClient() as client:
-            response = await client.post(
-                GAMEBUS_API_URL,
-                headers=headers,
-                params=params,
-                json=activity.dict()
-            )
-            response.raise_for_status()
-            return response.json()
-    except httpx.HTTPError as e:
-        raise HTTPException(
-            status_code=e.response.status_code if hasattr(e, 'response') else 500,
-            detail=f"GameBus API error: {str(e)}"
-        )
 
+    response = requests.request("POST", url, headers=headers, data=payload, files=files)
+
+    print(response.text)
