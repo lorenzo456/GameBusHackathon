@@ -3,6 +3,48 @@ from tools import Toolset
 from goals import GoalManager
 from activities import Activity, select_activity, COMPETITIVE_ACTIVITIES, ENGAGEMENT_ACTIVITIES, PERSONAL_ACTIVITIES
 
+def check_activity_name_includes_steps(activity_name: str) -> int:
+    """
+    Check if the activity name includes steps and extract the step count.
+    
+    Args:
+        activity_name (str): The name of the activity to check
+        
+    Returns:
+        int: The number of steps found in the activity name, or None if no steps found
+        
+    Examples:
+        >>> check_activity_name_includes_steps("Walk 5000 steps")
+        5000
+        >>> check_activity_name_includes_steps("Run 10k steps")
+        10000
+        >>> check_activity_name_includes_steps("Yoga session")
+        None
+    """
+    # Convert to lowercase for case-insensitive matching
+    name = activity_name.lower()
+    
+    # Common step-related keywords
+    step_keywords = ["steps", "step", "walk", "run", "jog"]
+    
+    # Check if the activity name contains any step-related keywords
+    if not any(keyword in name for keyword in step_keywords):
+        return None
+        
+    # Extract all numbers from the string
+    import re
+    numbers = re.findall(r'\d+', activity_name)
+    
+    # If no numbers found, return None
+    if not numbers:
+        return None
+        
+    # Convert the first number found to integer
+    step_count = int(numbers[0])
+    
+        
+    return step_count
+
 class NPC_Agent:
     def __init__(self, name: str):
         self.name = name
@@ -23,6 +65,12 @@ class NPC_Agent:
         """
         Add an activity to the current plan.
         """
+        # Check if the activity name includes steps
+        steps = check_activity_name_includes_steps(activity.name)
+        if steps is not None:
+            # Create a new activity with the extracted steps
+            activity = Activity(activity.name, activity.intensity, steps)
+        
         self.current_plan.append(activity)
         # print(f"Added to plan: {activity.name} (Intensity: {activity.intensity:.2f})")
 

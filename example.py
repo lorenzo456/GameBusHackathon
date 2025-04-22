@@ -15,7 +15,6 @@ def run_scenario(scenario_name: str, context: dict):
     agent.act(context)
     agent.print_current_plan()
 
-
 def main():
     # Scenario 1: Competitive scenario
     competitive_context = {
