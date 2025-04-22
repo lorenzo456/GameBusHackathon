@@ -10,9 +10,10 @@ def run_scenario(scenario_name: str, context: dict):
     """
     Run a single scenario with the given context.
     """
-    print(f"\n=== {scenario_name} ===")
+    # print(f"\n=== {scenario_name} ===")
     agent = NPC_Agent("FitnessBot")
     agent.act(context)
+    agent.print_current_plan()
 
 
 def main():
