@@ -1,18 +1,16 @@
 class Toolset:
-    def add_comment_on_post(self, message: str) -> None:
-        """Add a comment to a user's post."""
-        print(f"[COMMENT] {message}")
+    def __init__(self):
+        self.total_steps = 0
+
+    def add_comment_on_post(self) -> None:
+        """Add a comment to a user's post with an encouraging message."""
+        print("Added comment: I noticed your progress - you're doing amazing! Keep going!")
         
-    def like_post(self, message: str) -> None:
-        """Like a user's post with a supportive message."""
-        print(f"[LIKE] {message}")
+    def like_post(self) -> None:
+        """Like a user's post with an encouraging message."""
+        print("Liked post: Great job on your activity! Keep it up!")
         
-    def perform_activity(self, activity_type: str, duration: int) -> None:
-        """
-        Perform an activity as the NPC agent.
-        
-        Args:
-            activity_type: Type of activity (e.g., 'workout', 'meditation', 'walk')
-            duration: Duration of the activity in minutes
-        """
-        print(f"[ACTIVITY] NPC is performing {activity_type} for {duration} minutes") 
+    def record_steps(self, steps: int) -> None:
+        """Record the number of steps taken."""
+        self.total_steps += steps
+        print(f"Recorded {steps} steps. Total steps: {self.total_steps}") 

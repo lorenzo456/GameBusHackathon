@@ -1,46 +1,85 @@
-from typing import List, Dict, Any
+from typing import Dict, List
 from tools import Toolset
 from goals import GoalManager
-from activities import (
-    COMPETITIVE_ACTIVITIES,
-    ENGAGEMENT_ACTIVITIES,
-    PERSONAL_ACTIVITIES,
-    select_activity
-)
+from activities import Activity, select_activity, COMPETITIVE_ACTIVITIES, ENGAGEMENT_ACTIVITIES, PERSONAL_ACTIVITIES
 
 class NPC_Agent:
-    def __init__(self, user_id: str):
-        self.user_id = user_id
-        self.current_goal = None
+    def __init__(self, name: str):
+        self.name = name
         self.tools = Toolset()
         self.goal_manager = GoalManager()
-        
-    def set_goal(self, user_context: Dict[str, Any]) -> None:
-        """Set the current goal based on user context."""
-        self.current_goal = self.goal_manager.get_appropriate_goal(user_context)
-        
-    def act(self, user_context: Dict[str, Any]) -> None:
+        self.current_goal = None
+        self.current_activities = []
+        self.current_plan = []
+
+    def set_goal(self, user_context: Dict[str, float]) -> None:
         """
-        Determine and execute the next best action based on user context.
-        
-        Args:
-            user_context: Dictionary containing user's current state and history
+        Set the current goal based on user context.
+        """
+        self.current_goal = self.goal_manager.select_goal(user_context)
+        print(f"{self.name} has set a new goal: {self.current_goal}")
+
+    def act(self, user_context: Dict[str, float]) -> None:
+        """
+        Perform actions based on the current goal and user context.
         """
         if not self.current_goal:
             self.set_goal(user_context)
-            
-        # Convert context to float values for activity selection
-        context_scores = {k: float(v) for k, v in user_context.items() if isinstance(v, (int, float))}
-            
+
+        # Select appropriate activities based on the goal
         if self.current_goal == "compete_with_user":
-            activity = select_activity(COMPETITIVE_ACTIVITIES, context_scores)
-            self.tools.perform_activity(activity.name, activity.duration)
+            self.current_activities = select_activity(COMPETITIVE_ACTIVITIES, user_context, "compete_with_user")
+            # self._perform_competitive_activities()
+        
         elif self.current_goal == "engage_with_user":
-            activity = select_activity(ENGAGEMENT_ACTIVITIES, context_scores)
+            self.current_activities = select_activity(ENGAGEMENT_ACTIVITIES, user_context, "engage_with_user")
+            # self._perform_engagement_activities()
+        
+        elif self.current_goal == "pursue_personal_goals":
+            self.current_activities = select_activity(PERSONAL_ACTIVITIES, user_context, "pursue_personal_goals")
+            # self._perform_personal_activities()
+
+    def _perform_competitive_activities(self) -> None:
+        """
+        Perform a sequence of competitive activities.
+        """
+        if not self.current_activities:
+            print(f"{self.name} couldn't find suitable competitive activities.")
+            return
+
+        total_steps = sum(activity.steps for activity in self.current_activities if activity.steps)
+        print(f"{self.name} is performing competitive activities to achieve {total_steps} steps:")
+        
+        for activity in self.current_activities:
+            if activity.steps:
+                print(f"- {activity.name} (Intensity: {activity.intensity:.2f})")
+            else:
+                print(f"- {activity.name} (Intensity: {activity.intensity:.2f})")
+
+    def _perform_engagement_activities(self) -> None:
+        """
+        Perform a sequence of engagement activities.
+        """
+        if not self.current_activities:
+            print(f"{self.name} couldn't find suitable engagement activities.")
+            return
+
+        print(f"{self.name} is performing engagement activities:")
+        for activity in self.current_activities:
             if activity.name == "like_post":
-                self.tools.like_post("Great job on your activity! Keep it up!")
-            else:  # add_comment_on_post
-                self.tools.add_comment_on_post("I noticed your progress - you're doing amazing! Keep going!")
-        else:  # pursue_own_goals
-            activity = select_activity(PERSONAL_ACTIVITIES, context_scores)
-            self.tools.perform_activity(activity.name, activity.duration) 
+                self.tools.like_post()
+            elif activity.name == "add_comment_on_post":
+                self.tools.add_comment_on_post()
+            print(f"- {activity.name} (Intensity: {activity.intensity:.2f})")
+
+    def _perform_personal_activities(self) -> None:
+        """
+        Perform a sequence of personal activities.
+        """
+        if not self.current_activities:
+            print(f"{self.name} couldn't find suitable personal activities.")
+            return
+
+        print(f"{self.name} is performing personal activities:")
+        for activity in self.current_activities:
+            print(f"- {activity.name} (Intensity: {activity.intensity:.2f})") 
