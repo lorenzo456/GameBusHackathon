@@ -16,7 +16,8 @@ def run_scenario(scenario_name: str, context: dict):
     agent = NPC_Agent("Standard NPC")
     agent.act(context)
     agent.add_plan_to_scheduler(context)
-    print(agent.scheduler.get_schedule())
+    # print(agent.scheduler.get_schedule())
+    agent.scheduler.execute_schedule()
 
 
 def main():

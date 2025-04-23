@@ -7,6 +7,7 @@ import openai
 from datetime import datetime, timedelta
 from dotenv import load_dotenv
 import os
+import time
 
 # Load environment variables from .env file
 load_dotenv()
@@ -262,14 +263,15 @@ class NPC_Agent:
         """Add all activities from the current plan to the scheduler with optimal timing."""
         # Determine optimal timing for activities
         scheduled_activities = determine_activity_timing(self.current_plan, user_context)
+        
         #strip the name from walking activities using the check_activity_name_includes_steps function
         for activity in scheduled_activities:
             if activity.name.startswith("Walk"):
-                activity.name = check_activity_name_includes_steps(activity.name)  
-
+                activity.name = check_activity_name_includes_steps(activity.name)
+        
         # Add activities to scheduler
         for activity in scheduled_activities:
-            self.scheduler.add_activity(activity) 
+            self.scheduler.add_activity(activity)
 
 
 
