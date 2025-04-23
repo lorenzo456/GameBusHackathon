@@ -1,5 +1,6 @@
 from typing import List
 from activities import Activity
+from api import post_walk_activity
 from tools import Toolset
 import time
 
@@ -36,6 +37,8 @@ class ActivityScheduler:
     def _execute_steps_activity(self, activity: Activity) -> None:
         """Execute a steps-based activity."""
         print(f"Executing steps activity: {activity.name}")
+        post_walk_activity(activity.steps) 
+
 
     def _execute_like_post(self, activity: Activity) -> None:
         """Execute a like post activity."""
