@@ -145,6 +145,54 @@ def determine_activity_timing(activities: List[Activity], user_context: Dict[str
         for activity in activities:
             activity.delay = 30  # Default 30-minute delay
         return activities
+    
+def create_message_for_latest_player_walking_activity(user_context: Dict[str, float]) -> str:
+    """
+    Generate an encouraging message for the player's walking activity based on their context.
+    
+    Args:
+        user_context: Dictionary containing user's current context (energy, stress, etc.)
+        
+    Returns:
+        str: An encouraging message tailored to the user's context
+    """
+    prompt = f"""
+    Generate an encouraging message for a player's walking activity progress.
+    Consider the following user context:
+    - Energy Level: {user_context.get('energy_level', 0.5)}
+    - Stress Level: {user_context.get('stress_level', 0.5)}
+    - Competitive Score: {user_context.get('competitive_score', 0.5)}
+    - Social Score: {user_context.get('social_score', 0.5)}
+    
+    The message should be:
+    1. Positive and encouraging
+    2. Tailored to the user's current energy and stress levels
+    3. Include a motivational element
+    4. Be concise (1-2 sentences)
+    5. Feel personal and genuine
+    6. Less robotic, more like a humanlike - be more like a friend
+    7. Be short and to the point - based on real life short social media messages
+    
+    Return ONLY the message text, no additional formatting or explanation.
+    """
+    
+    try:
+        # Call the LLM using the new OpenAI API format
+        client = openai.OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a supportive fitness coach. Generate encouraging messages that are personal and motivating."},
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        return response.choices[0].message.content.strip()
+        
+    except Exception as e:
+        print(f"Error generating message: {e}")
+        # Fallback to a generic encouraging message
+        return "Great job on your walking activity! Every step counts towards your health goals. Keep it up!"
 
 class NPC_Agent:
     def __init__(self, name: str):
