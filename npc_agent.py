@@ -111,8 +111,8 @@ def determine_activity_timing(activities: List[Activity], user_context: Dict[str
         timing_data = json.loads(schedule)
         
         # Debug print to see what we're working with
-        print("Activity names in timing data:", list(timing_data.keys()))
-        print("Our activity names:", [activity.name for activity in activities])
+        # print("Activity names in timing data:", list(timing_data.keys()))
+        # print("Our activity names:", [activity.name for activity in activities])
         
         # Update activities with delay information
         for activity in activities:
@@ -262,7 +262,11 @@ class NPC_Agent:
         """Add all activities from the current plan to the scheduler with optimal timing."""
         # Determine optimal timing for activities
         scheduled_activities = determine_activity_timing(self.current_plan, user_context)
-        
+        #strip the name from walking activities using the check_activity_name_includes_steps function
+        for activity in scheduled_activities:
+            if activity.name.startswith("Walk"):
+                activity.name = check_activity_name_includes_steps(activity.name)  
+
         # Add activities to scheduler
         for activity in scheduled_activities:
             self.scheduler.add_activity(activity) 
