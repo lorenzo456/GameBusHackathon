@@ -7,6 +7,7 @@ class Activity:
     name: str
     intensity: float
     steps: int = None
+    delay: int = None
 # Competitive activities - focus on measurable achievements
 COMPETITIVE_ACTIVITIES = [
     Activity("Walked 10000 steps", 0.4, 10000),

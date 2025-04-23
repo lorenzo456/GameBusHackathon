@@ -3,6 +3,16 @@ from tools import Toolset
 from goals import GoalManager
 from activities import Activity, select_activity, COMPETITIVE_ACTIVITIES, ENGAGEMENT_ACTIVITIES, PERSONAL_ACTIVITIES
 from scheduler import ActivityScheduler
+import openai
+from datetime import datetime, timedelta
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
+
+# Set OpenAI API key from environment variable
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def check_activity_name_includes_steps(activity_name: str) -> int:
     """
@@ -45,6 +55,95 @@ def check_activity_name_includes_steps(activity_name: str) -> int:
     
         
     return step_count
+
+def determine_activity_timing(activities: List[Activity], user_context: Dict[str, float]) -> List[Activity]:
+    """
+    Use an LLM to determine optimal delay between activities based on user context.
+    
+    Args:
+        activities: List of activities to schedule
+        user_context: User's current context (energy, stress, etc.)
+        
+    Returns:
+        List of activities with delay information added
+    """
+    # Prepare the prompt for the LLM
+    activity_list = [activity.name for activity in activities]
+    prompt = f"""
+    Given the following user context and activities, determine optimal delay between each activity.
+    Consider the user's energy level, stress level, and activity intensity.
+    
+    User Context:
+    - Energy Level: {user_context.get('energy_level', 0.5)}
+    - Stress Level: {user_context.get('stress_level', 0.5)}
+    - Competitive Score: {user_context.get('competitive_score', 0.5)}
+    - Social Score: {user_context.get('social_score', 0.5)}
+    
+    Activities to schedule:
+    {activity_list}
+    
+    For each activity, determine the delay (in minutes) before the next activity should start.
+    Return ONLY a JSON object with activity names as keys and delay in minutes as values.
+    Use the EXACT activity names from the list above.
+    Example format:
+    {{
+        "Activity 1": 30,
+        "Activity 2": 45,
+        "Activity 3": 20
+    }}
+    """
+    
+    try:
+        # Call the LLM using the new OpenAI API format
+        client = openai.OpenAI()
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo",
+            messages=[
+                {"role": "system", "content": "You are a fitness scheduling assistant. Always respond with valid JSON using the exact activity names provided."},
+                {"role": "user", "content": prompt}
+            ],
+            response_format={ "type": "json_object" }
+        )
+        
+        # Parse the LLM response
+        schedule = response.choices[0].message.content
+        import json
+        timing_data = json.loads(schedule)
+        
+        # Debug print to see what we're working with
+        print("Activity names in timing data:", list(timing_data.keys()))
+        print("Our activity names:", [activity.name for activity in activities])
+        
+        # Update activities with delay information
+        for activity in activities:
+            # Try exact match first
+            if activity.name in timing_data:
+                activity.delay = timing_data[activity.name]
+            else:
+                # Try case-insensitive match
+                activity_name_lower = activity.name.lower()
+                matching_key = next((key for key in timing_data.keys() if key.lower() == activity_name_lower), None)
+                if matching_key:
+                    activity.delay = timing_data[matching_key]
+                else:
+                    print(f"Warning: No delay found for activity '{activity.name}'")
+                    activity.delay = 30  # Default delay if not found
+        
+        return activities
+        
+    except json.JSONDecodeError as e:
+        print(f"Error parsing JSON response: {e}")
+        print(f"Raw response: {schedule}")
+        # Fallback to default delay if JSON parsing fails
+        for activity in activities:
+            activity.delay = 30
+        return activities
+    except Exception as e:
+        print(f"Error determining activity timing: {e}")
+        # Fallback to default delay if LLM fails
+        for activity in activities:
+            activity.delay = 30  # Default 30-minute delay
+        return activities
 
 class NPC_Agent:
     def __init__(self, name: str):
@@ -90,6 +189,8 @@ class NPC_Agent:
                 plan_str += f"\n{i}. {activity.name} (Intensity: {activity.intensity:.2f}, Steps: {activity.steps})"
             else:
                 plan_str += f"\n{i}. {activity.name} (Intensity: {activity.intensity:.2f})"
+            if hasattr(activity, 'delay'):
+                plan_str += f"\n   Delay before next: {activity.delay}min"
         return plan_str
 
     def act(self, user_context: Dict[str, float]) -> None:
@@ -157,7 +258,14 @@ class NPC_Agent:
         for activity in self.current_activities:
             print(f"- {activity.name} (Intensity: {activity.intensity:.2f})")
 
-    def add_plan_to_scheduler(self) -> None:
-        """Add all activities from the current plan to the scheduler."""
-        for activity in self.current_plan:
+    def add_plan_to_scheduler(self, user_context: Dict[str, float]) -> None:
+        """Add all activities from the current plan to the scheduler with optimal timing."""
+        # Determine optimal timing for activities
+        scheduled_activities = determine_activity_timing(self.current_plan, user_context)
+        
+        # Add activities to scheduler
+        for activity in scheduled_activities:
             self.scheduler.add_activity(activity) 
+
+
+
