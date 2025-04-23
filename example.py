@@ -1,4 +1,4 @@
-from api import get_latest_player_walking_activity, post_walk_activity
+from api import get_latest_player_walking_activity, post_message_on_latest_player_walking_activity, post_walk_activity
 from npc_agent import NPC_Agent
 import httpx
 import asyncio
@@ -18,6 +18,7 @@ def run_scenario(scenario_name: str, context: dict):
     # agent.add_plan_to_scheduler(context)
     # # print(agent.scheduler.get_schedule())
     # agent.scheduler.execute_schedule()
+    post_message_on_latest_player_walking_activity()
 
 def main():
     # Scenario 1: Competitive scenario
