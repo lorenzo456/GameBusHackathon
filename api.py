@@ -24,3 +24,20 @@ def post_walk_activity(steps: int):
     response = requests.request("POST", url, headers=headers, data=payload, files=files)
 
     print(response.text)
+
+
+def get_latest_player_walking_activity():
+    url = "https://api.healthyw8.gamebus.eu/v2/players/14/activities?gds=walk&sort=-date&limit=1"
+
+    payload = {}
+    headers = {
+    'Authorization': 'Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOlsiZ2FtZWJ1c19hcGkiXSwidXNlcl9uYW1lIjoibC5qLmphbWVzQHR1ZS5ubCIsInNjb3BlIjpbInJlYWQiLCJ3cml0ZSIsInRydXN0IiwiZGVsZXRlOmFjdGl2aXR5Il0sImV4cCI6MTgyMzA4OTY2NywiYXV0aG9yaXRpZXMiOlsiQURNSU4iLCJDQU1QQUlHTl9PUkdBTklaRVIiLCJERVYiLCJVU0VSIl0sImp0aSI6IlBwUTZlb2d4dVBkWGxRSEpGcjkzMlYtblJOUSIsImNsaWVudF9pZCI6ImdhbWVidXNfc3R1ZGlvX2FwcCJ9.mhUGYNLgAEt_jVWl8rZEbxddPfJvKbaRjAobCeOZOTmnhAf853McX-KFmssD4ll4JihFghXnvNBp3YmzXW1GcA2XpredaX-5h_uOWfvmT6QR6Pd1g0XW1E2cVNtbnFGZIOuV0aXj8AyelujSXIAYThIs5eqnrrYkC_cEY70CzauBU0pxEQZGH6wbWos3tlOTERxgDkxNrmHiam4Cf9yf4hziF5T6_x4PmsS7KfwyGN7L1_MUUNfkbhT40F3-BbJtzTs9Dt1q93YfRPer_EnY8OI6-vK1sGc9SQFDaP3dSl2zXteN4_IAEUUM1YvwAG2HqrdjtAappVBXcBMtfeUZ1Q'
+    }
+
+    response = requests.request("GET", url, headers=headers, data=payload)
+    response_json = json.loads(response.text)
+    #get the id of the activity
+    activity_id = response_json[0]['id']
+
+    return activity_id
+

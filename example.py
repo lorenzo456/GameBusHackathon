@@ -1,4 +1,4 @@
-from api import post_walk_activity
+from api import get_latest_player_walking_activity, post_walk_activity
 from npc_agent import NPC_Agent
 import httpx
 import asyncio
@@ -12,13 +12,12 @@ def run_scenario(scenario_name: str, context: dict):
     """
     Run a single scenario with the given context.
     """
-    # print(f"\n=== {scenario_name} ===")
-    agent = NPC_Agent("Standard NPC")
-    agent.act(context)
-    agent.add_plan_to_scheduler(context)
-    # print(agent.scheduler.get_schedule())
-    agent.scheduler.execute_schedule()
-
+    # # print(f"\n=== {scenario_name} ===")
+    # agent = NPC_Agent("Standard NPC")
+    # agent.act(context)
+    # agent.add_plan_to_scheduler(context)
+    # # print(agent.scheduler.get_schedule())
+    # agent.scheduler.execute_schedule()
 
 def main():
     # Scenario 1: Competitive scenario
