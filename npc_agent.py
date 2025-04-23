@@ -1,4 +1,5 @@
 from typing import Dict, List
+from api import post_message_on_latest_player_walking_activity
 from tools import Toolset
 from goals import GoalManager
 from activities import Activity, select_activity, COMPETITIVE_ACTIVITIES, ENGAGEMENT_ACTIVITIES, PERSONAL_ACTIVITIES
@@ -146,53 +147,6 @@ def determine_activity_timing(activities: List[Activity], user_context: Dict[str
             activity.delay = 30  # Default 30-minute delay
         return activities
     
-def create_message_for_latest_player_walking_activity(user_context: Dict[str, float]) -> str:
-    """
-    Generate an encouraging message for the player's walking activity based on their context.
-    
-    Args:
-        user_context: Dictionary containing user's current context (energy, stress, etc.)
-        
-    Returns:
-        str: An encouraging message tailored to the user's context
-    """
-    prompt = f"""
-    Generate an encouraging message for a player's walking activity progress.
-    Consider the following user context:
-    - Energy Level: {user_context.get('energy_level', 0.5)}
-    - Stress Level: {user_context.get('stress_level', 0.5)}
-    - Competitive Score: {user_context.get('competitive_score', 0.5)}
-    - Social Score: {user_context.get('social_score', 0.5)}
-    
-    The message should be:
-    1. Positive and encouraging
-    2. Tailored to the user's current energy and stress levels
-    3. Include a motivational element
-    4. Be concise (1-2 sentences)
-    5. Feel personal and genuine
-    6. Less robotic, more like a humanlike - be more like a friend
-    7. Be short and to the point - based on real life short social media messages
-    
-    Return ONLY the message text, no additional formatting or explanation.
-    """
-    
-    try:
-        # Call the LLM using the new OpenAI API format
-        client = openai.OpenAI()
-        response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
-            messages=[
-                {"role": "system", "content": "You are a supportive fitness coach. Generate encouraging messages that are personal and motivating."},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        
-        return response.choices[0].message.content.strip()
-        
-    except Exception as e:
-        print(f"Error generating message: {e}")
-        # Fallback to a generic encouraging message
-        return "Great job on your walking activity! Every step counts towards your health goals. Keep it up!"
 
 class NPC_Agent:
     def __init__(self, name: str):
@@ -254,58 +208,17 @@ class NPC_Agent:
             self.current_activities = select_activity(COMPETITIVE_ACTIVITIES, user_context, "compete_with_user")
             for activity in self.current_activities:
                 self.add_to_plan(activity)
-            self._perform_competitive_activities()
         
         elif self.current_goal == "engage_with_user":
             self.current_activities = select_activity(ENGAGEMENT_ACTIVITIES, user_context, "engage_with_user")
             for activity in self.current_activities:
                 self.add_to_plan(activity)
-            self._perform_engagement_activities()
         
         elif self.current_goal == "pursue_personal_goals":
             self.current_activities = select_activity(PERSONAL_ACTIVITIES, user_context, "pursue_personal_goals")
             for activity in self.current_activities:
                 self.add_to_plan(activity)
-            self._perform_personal_activities()
 
-    def _perform_competitive_activities(self) -> None:
-        """
-        Perform a sequence of competitive activities.
-        """
-        if not self.current_activities:
-            print(f"{self.name} couldn't find suitable competitive activities.")
-            return
-
-        total_steps = sum(activity.steps for activity in self.current_activities if activity.steps)
-
-
-    def _perform_engagement_activities(self) -> None:
-        """
-        Perform a sequence of engagement activities.
-        """
-        if not self.current_activities:
-            print(f"{self.name} couldn't find suitable engagement activities.")
-            return
-
-        print(f"{self.name} is performing engagement activities:")
-        for activity in self.current_activities:
-            if activity.name == "like_post":
-                self.tools.like_post()
-            elif activity.name == "add_comment_on_post":
-                self.tools.add_comment_on_post()
-            print(f"- {activity.name} (Intensity: {activity.intensity:.2f})")
-
-    def _perform_personal_activities(self) -> None:
-        """
-        Perform a sequence of personal activities.
-        """
-        if not self.current_activities:
-            print(f"{self.name} couldn't find suitable personal activities.")
-            return
-
-        print(f"{self.name} is performing personal activities:")
-        for activity in self.current_activities:
-            print(f"- {activity.name} (Intensity: {activity.intensity:.2f})")
 
     def add_plan_to_scheduler(self, user_context: Dict[str, float]) -> None:
         """Add all activities from the current plan to the scheduler with optimal timing."""

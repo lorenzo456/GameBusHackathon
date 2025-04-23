@@ -1,6 +1,6 @@
 from typing import List
 from activities import Activity
-from api import post_walk_activity
+from api import post_message, post_walk_activity
 from tools import Toolset
 import time
 
@@ -13,7 +13,7 @@ class ActivityScheduler:
         """Add an activity to the schedule."""
         self.schedule.append(activity)
 
-    def execute_schedule(self) -> None:
+    def execute_schedule(self, user_context:dict) -> None:
         """Execute all activities in the schedule in order with delays."""
         for activity in self.schedule:
             # Execute the activity
@@ -22,7 +22,7 @@ class ActivityScheduler:
             elif activity.name == "like_post":
                 self._execute_like_post(activity)
             elif activity.name == "add_comment_on_post":
-                self._execute_comment_post(activity)
+                self._execute_comment_post(activity, user_context)
             elif activity.name.startswith("Walk"):
                 self._execute_steps_activity(activity)
             else:
@@ -44,9 +44,10 @@ class ActivityScheduler:
         """Execute a like post activity."""
         print(f"Executing like post activity: {activity.name}")
 
-    def _execute_comment_post(self, activity: Activity) -> None:
+    def _execute_comment_post(self, activity: Activity, user_context: dict) -> None:
         """Execute a comment post activity."""
         print(f"Executing comment post activity: {activity.name}")
+        post_message(user_context)
 
     def _execute_personal_activity(self, activity: Activity) -> None:
         """Execute a personal activity."""

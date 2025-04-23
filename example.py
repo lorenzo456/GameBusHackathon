@@ -1,5 +1,5 @@
 from api import get_latest_player_walking_activity, post_message_on_latest_player_walking_activity, post_walk_activity
-from npc_agent import NPC_Agent, create_message_for_latest_player_walking_activity
+from npc_agent import NPC_Agent
 import httpx
 import asyncio
 import requests
@@ -12,32 +12,31 @@ def run_scenario(scenario_name: str, context: dict):
     """
     Run a single scenario with the given context.
     """
-    # # print(f"\n=== {scenario_name} ===")
-    # agent = NPC_Agent("Standard NPC")
-    # agent.act(context)
-    # agent.add_plan_to_scheduler(context)
-    # # print(agent.scheduler.get_schedule())
-    # agent.scheduler.execute_schedule()
-    print(create_message_for_latest_player_walking_activity(context))
+    # print(f"\n=== {scenario_name} ===")
+    agent = NPC_Agent("Standard NPC")
+    agent.act(context)
+    agent.add_plan_to_scheduler(context)
+    # print(agent.scheduler.get_schedule())
+    agent.scheduler.execute_schedule(context)
 
 def main():
     # Scenario 1: Competitive scenario
-    competitive_context = {
-        "competitive_score": 0.8,
-        "energy_level": 0.9,
-        "social_score": 0.5,
-        "stress_level": 0.3
-    }
-    run_scenario("Competitive Scenario", competitive_context)
-
-    # # Scenario 2: Engagement scenario
-    # engagement_context = {
-    #     "competitive_score": 0.3,
-    #     "energy_level": 0.6,
-    #     "social_score": 0.2,  # Low social score triggers engagement
-    #     "stress_level": 0.4
+    # competitive_context = {
+    #     "competitive_score": 0.8,
+    #     "energy_level": 0.9,
+    #     "social_score": 0.5,
+    #     "stress_level": 0.3
     # }
-    # run_scenario("Engagement Scenario", engagement_context)
+    # run_scenario("Competitive Scenario", competitive_context)
+
+    # Scenario 2: Engagement scenario
+    engagement_context = {
+        "competitive_score": 0.3,
+        "energy_level": 0.6,
+        "social_score": 0.2,  # Low social score triggers engagement
+        "stress_level": 0.4
+    }
+    run_scenario("Engagement Scenario", engagement_context)
 
     # # Scenario 3: Personal goals scenario
     # personal_context = {
