@@ -1,0 +1,63 @@
+{
+    "activities": [
+        {
+            "id": 12345,
+            "type": "walking",
+            "steps": 5000,
+            "timestamp": "2024-03-15T10:30:00Z",
+            "duration": 45,
+            "calories": 250,
+            "distance": 3.5,
+            "player": {
+                "id": 921,
+                "name": "John Doe"
+            },
+            "points": 50,
+            "comments": [
+                {
+                    "id": 1,
+                    "player_id": 922,
+                    "message": "Great job on reaching 5000 steps!",
+                    "timestamp": "2024-03-15T11:00:00Z"
+                }
+            ]
+        },
+        {
+            "id": 12346,
+            "type": "walking",
+            "steps": 7500,
+            "timestamp": "2024-03-16T09:15:00Z",
+            "duration": 60,
+            "calories": 375,
+            "distance": 5.2,
+            "player": {
+                "id": 921,
+                "name": "John Doe"
+            },
+            "points": 75,
+            "comments": []
+        },
+        {
+            "id": 12347,
+            "type": "walking",
+            "steps": 10000,
+            "timestamp": "2024-03-17T08:45:00Z",
+            "duration": 80,
+            "calories": 500,
+            "distance": 7.0,
+            "player": {
+                "id": 921,
+                "name": "John Doe"
+            },
+            "points": 100,
+            "comments": [
+                {
+                    "id": 2,
+                    "player_id": 923,
+                    "message": "Amazing progress! You're really stepping up your game!",
+                    "timestamp": "2024-03-17T09:30:00Z"
+                }
+            ]
+        }
+    ]
+} 
