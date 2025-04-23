@@ -38,17 +38,5 @@ def main():
     }
     run_scenario("Engagement Scenario", engagement_context)
 
-    # # Scenario 3: Personal goals scenario
-    # personal_context = {
-    #     "competitive_score": 0.4,
-    #     "energy_level": 0.7,
-    #     "social_score": 0.6,
-    #     "stress_level": 0.8  # High stress triggers personal activities
-    # }
-    # run_scenario("Personal Goals Scenario", personal_context)
-
-
-    # post_walk_activity(555) 
-
 if __name__ == "__main__":
     main() 
