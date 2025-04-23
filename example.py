@@ -6,14 +6,18 @@ import requests
 import json
 import requests
 
+from scheduler import ActivityScheduler
+
 def run_scenario(scenario_name: str, context: dict):
     """
     Run a single scenario with the given context.
     """
     # print(f"\n=== {scenario_name} ===")
-    agent = NPC_Agent("FitnessBot")
+    agent = NPC_Agent("Standard NPC")
     agent.act(context)
-    agent.print_current_plan()
+    agent.add_plan_to_scheduler()
+    print(agent.scheduler.get_schedule())
+
 
 def main():
     # Scenario 1: Competitive scenario

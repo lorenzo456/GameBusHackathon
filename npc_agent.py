@@ -2,6 +2,7 @@ from typing import Dict, List
 from tools import Toolset
 from goals import GoalManager
 from activities import Activity, select_activity, COMPETITIVE_ACTIVITIES, ENGAGEMENT_ACTIVITIES, PERSONAL_ACTIVITIES
+from scheduler import ActivityScheduler
 
 def check_activity_name_includes_steps(activity_name: str) -> int:
     """
@@ -53,6 +54,7 @@ class NPC_Agent:
         self.current_goal = None
         self.current_activities = []
         self.current_plan = []
+        self.scheduler = ActivityScheduler(self.tools)
 
     def set_goal(self, user_context: Dict[str, float]) -> None:
         """
@@ -74,20 +76,21 @@ class NPC_Agent:
         self.current_plan.append(activity)
         # print(f"Added to plan: {activity.name} (Intensity: {activity.intensity:.2f})")
 
-    def print_current_plan(self) -> None:
-        """
-        Print the current plan of activities.
-        """
+    def get_current_plan(self) -> str:
+        """Return a formatted string of the current plan."""
         if not self.current_plan:
-            print(f"{self.name} has no activities in the current plan.")
-            return
+            return f"{self.name} has no activities in the current plan."
 
+        plan_str = f"\nCurrent Plan for {self.name}:"
+        total_intensity = sum(activity.intensity for activity in self.current_plan)
+        plan_str += f"\nTotal planned intensity: {total_intensity:.2f}"
+        plan_str += "\nActivities:"
         for i, activity in enumerate(self.current_plan, 1):
             if activity.steps:
-                print(f"{i}. {activity.name} (Intensity: {activity.intensity:.2f}, Steps: {activity.steps})")
+                plan_str += f"\n{i}. {activity.name} (Intensity: {activity.intensity:.2f}, Steps: {activity.steps})"
             else:
-                print(f"{i}. {activity.name} (Intensity: {activity.intensity:.2f})")
-        print()
+                plan_str += f"\n{i}. {activity.name} (Intensity: {activity.intensity:.2f})"
+        return plan_str
 
     def act(self, user_context: Dict[str, float]) -> None:
         """
@@ -152,4 +155,9 @@ class NPC_Agent:
 
         print(f"{self.name} is performing personal activities:")
         for activity in self.current_activities:
-            print(f"- {activity.name} (Intensity: {activity.intensity:.2f})") 
+            print(f"- {activity.name} (Intensity: {activity.intensity:.2f})")
+
+    def add_plan_to_scheduler(self) -> None:
+        """Add all activities from the current plan to the scheduler."""
+        for activity in self.current_plan:
+            self.scheduler.add_activity(activity) 
