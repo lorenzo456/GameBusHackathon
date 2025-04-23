@@ -1,0 +1,48 @@
+{
+    "activities": [
+        {
+            "id": 1,
+            "type": "walking",
+            "steps": 12000,
+            "timestamp": "2022-03-05T08:30:00Z",
+            "duration": 75,
+            "calories": 550,
+            "distance": 8.4,
+            "player": {
+                "id": 921,
+                "name": "John Doe"
+            },
+            "points": 50,
+            "comments": [
+                {
+                    "id": 1,
+                    "player_id": 921,
+                    "message": "Great walk today!",
+                    "timestamp": "2022-03-05T11:20:00Z"
+                }
+            ]
+        },
+        {
+            "id": 2,
+            "type": "walking",
+            "steps": 8000,
+            "timestamp": "2022-03-10T14:45:00Z",
+            "duration": 45,
+            "calories": 350,
+            "distance": 5.6,
+            "player": {
+                "id": 921,
+                "name": "John Doe"
+            },
+            "points": 30,
+            "comments": [
+                {
+                    "id": 1,
+                    "player_id": 921,
+                    "message": "Nice evening stroll!",
+                    "timestamp": "2022-03-10T18:00:00Z"
+                }
+            ]
+        }
+    ]
+}

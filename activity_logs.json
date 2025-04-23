@@ -1,13 +1,13 @@
 {
     "activities": [
         {
-            "id": 12345,
+            "id": 1,
             "type": "walking",
-            "steps": 5000,
-            "timestamp": "2024-03-15T10:30:00Z",
-            "duration": 45,
-            "calories": 250,
-            "distance": 3.5,
+            "steps": 12000,
+            "timestamp": "2022-09-22T08:30:00Z",
+            "duration": 75,
+            "calories": 600,
+            "distance": 8.4,
             "player": {
                 "id": 921,
                 "name": "John Doe"
@@ -16,48 +16,54 @@
             "comments": [
                 {
                     "id": 1,
-                    "player_id": 922,
-                    "message": "Great job on reaching 5000 steps!",
-                    "timestamp": "2024-03-15T11:00:00Z"
+                    "player_id": 921,
+                    "message": "Great workout today!",
+                    "timestamp": "2022-09-22T10:00:00Z"
+                },
+                {
+                    "id": 2,
+                    "player_id": 921,
+                    "message": "Feeling energized!",
+                    "timestamp": "2022-09-22T12:00:00Z"
                 }
             ]
         },
         {
-            "id": 12346,
+            "id": 2,
             "type": "walking",
-            "steps": 7500,
-            "timestamp": "2024-03-16T09:15:00Z",
-            "duration": 60,
-            "calories": 375,
-            "distance": 5.2,
+            "steps": 8000,
+            "timestamp": "2022-09-24T17:00:00Z",
+            "duration": 45,
+            "calories": 400,
+            "distance": 5.6,
             "player": {
                 "id": 921,
                 "name": "John Doe"
             },
-            "points": 75,
+            "points": 30,
             "comments": []
         },
         {
-            "id": 12347,
+            "id": 3,
             "type": "walking",
-            "steps": 10000,
-            "timestamp": "2024-03-17T08:45:00Z",
-            "duration": 80,
-            "calories": 500,
-            "distance": 7.0,
+            "steps": 14000,
+            "timestamp": "2022-09-25T09:00:00Z",
+            "duration": 90,
+            "calories": 700,
+            "distance": 9.8,
             "player": {
                 "id": 921,
                 "name": "John Doe"
             },
-            "points": 100,
+            "points": 70,
             "comments": [
                 {
-                    "id": 2,
-                    "player_id": 923,
-                    "message": "Amazing progress! You're really stepping up your game!",
-                    "timestamp": "2024-03-17T09:30:00Z"
+                    "id": 3,
+                    "player_id": 921,
+                    "message": "Long walk but worth it!",
+                    "timestamp": "2022-09-25T11:30:00Z"
                 }
             ]
         }
     ]
-} 
+}
